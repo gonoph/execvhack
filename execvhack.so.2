@@ -1,0 +1,82 @@
+.TH EXECVHACK.SO 2 2016-03-13 "1.0.0-1" "Gonoph.Net"
+.SH NAME
+execvhack.so \- shared library that overrides execv() and it's like and prints out the argv[] values to stderr.
+.SH SYNOPSIS
+.RB "$ " LD_PRELOAD=/usr/local/lib/execvhack.so " sh -c '" "sh -c \*(lq/bin/echo this is a test\*(rq" "'"
+.SH DESCRIPTION
+.TP
+.IR execvhack.so " overloads the following " execv "(3) function calls:"
+.nf
+.BI "int execv(const char *" path ", char *const " argv "[]);"
+.BI "int execvp(const char *" file ", char *const " argv "[]);"
+.BI "int execve(const char *" path ", char *const " argv "[], char *const " envp "[]);"
+.BI "int execvpe(const char *" file ", char *const " argv "[], char *const " envp "[]);"
+.fi
+.LP
+.PP
+Upon initialization, all original function pointers are saved via the constructor, as defined here:
+.I http://tldp.org/HOWTO/Program-Library-HOWTO/miscellaneous.html#INIT-AND-CLEANUP
+.RS 8
+.PP
+Libraries should export initialization and cleanup routines using the gcc __attribute__((constructor)) and __attribute__((destructor)) function attributes. See the gcc info pages for information on these. Constructor routines are executed before dlopen returns (or before main() is started if the library is loaded at load time). Destructor routines are executed before dlclose returns (or after exit() or completion of main() if the library is loaded at load time). The C prototypes for these functions are:
+.nf
+.sp
+.BI "void " __attribute__ " ((" constructor ")) my_init(" void );
+.BI "void " __attribute__ " ((" destructor ")) my_fini(" void );
+.RE
+.PP
+.RI "When a given overloaded function is called, the values of " argv " are printed to " stderr ", prefixed with the called " file " or " path .
+.SH EXAMPLE
+.PP
+.nf
+.RB "// <" sample.c " source begin>
+#include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+int main(const int argc, const char *argv[], const char *envp[]) {
+	int i;
+	char *path, **args;
+	if (argc < 2) {
+		fprintf(stderr, "Usage: %s <path to command> (<arguments>)\\n", argv[0]);
+		exit(1);
+	}
+	path = strdup(argv[1]);
+	args = (char**)calloc(argc, sizeof(char*));
+	for (i = 1 ; i < argc ; i++) {
+		args[i-1] = strdup(argv[i]);
+	}
+	args[i]=NULL;
+	execvp(path, args);
+	perror("Unable to execvp()");
+	exit(-1);
+}
+.RB "// <" sample.c " source end>
+.sp
+$ gcc sample.c -o sample
+$ LD_PRELOAD=/usr/local/lib/execvhack.so ./sample id daemon
+Loading hack.
+id: argv[0]: [[id]]
+id: argv[1]: [[daemon]]
+Loading hack.
+uid=2(daemon) gid=2(daemon) groups=2(daemon)
+.fi
+.SH ERRORS
+All Errors are passed along from the original function. If the system is low on resources, there maybe problems with the extra
+.BR printf (3)
+calls, where there might not be enough memory available for allocation.
+.SH NOTES
+This library is an example of how to perform LD_PRELOAD, and is an example of how certain system calls can be hijacked for other purposes. Imagine malloc() being hijacked, and a new thread being created which monitors the memory pointers of everything returned by the original malloc() function. Based on other filters and logic, this thread could easedrop or change memory which the calling program assumed was secure or immutable.
+.PP
+While this is not a huge concern for normal open source software, proprietary software, or security software maybe concerned.
+.PP
+Additionally, a noble developer may use this solve a bug, or implement a feature that wasn't included in an existing library for which there is no original code (inherited systems anyone???). The sky is the limit here - it's just up to your imagination!
+.SH BUGS
+It would be possible to implement the
+.BR execl "(3), " execlp "(3), " execle (3)
+functions, but I didn't have the time.
+.SH SEE ALSO
+.BR execv (3),
+.BR execve (3),
+.BR ld-linux (8)
