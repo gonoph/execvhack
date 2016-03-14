@@ -12,6 +12,8 @@ Additionally, a noble developer may use this solve a bug, or implement a feature
 
 ### To build it:
 
+Only for the build step, you will need to download `shc` from http://www.datsi.fi.upm.es/~frosal/, and install it. Or you can use the pre-compiled RPM, I made here: http://www.gonoph.net/repos/gonoph.net/generic/dist/shc-3.8.9b-1.x86\_64.rpm
+
     $ make all
 
 ### To install the shared library under /usr/local:
@@ -20,8 +22,14 @@ Additionally, a noble developer may use this solve a bug, or implement a feature
 
 ### OR just install it from the execvhack.spec file.
 
+    $ make dist && mkdir -p ~/rpmbuild/SOURCES && cp -v *.tgz ~/rpmbuild/SOURCES
     $ rpmbuild -ba execvhack.spec
-    $ yum install `ls ~/rpmbuild/RPMS/$(uname -p)/execvhack-*.rpm | head -1`
+    $ sudo yum install `ls ~/rpmbuild/RPMS/$(uname -p)/execvhack-*.rpm | head -1`
+
+### OR just download it from my repository:
+
+    $ sudo rpm -ivh http://www.gonoph.net/repos/gonoph.net/generic/dist/gonophnet-generic-1.0.0-1.x86_64.rpm
+    $ sudo yum install -y execvhack
 
 ## HOW TO USE IT
 
