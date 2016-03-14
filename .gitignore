@@ -1,0 +1,5 @@
+*.o
+*.so
+secret
+secret.sh.x
+secret.sh.x.c
