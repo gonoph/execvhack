@@ -1,9 +1,9 @@
 Name:		execvhack
 Version:	1.0.0
-Release:	1
+Release:	2
 Summary:	Library and example script used to show LD_PRELOAD
 
-License:	GNU
+License:	GPL
 URL:		http://www.gonoph.net
 Source0:	execvhack-1.0.0.tgz
 
@@ -32,11 +32,13 @@ gzip %{buildroot}/usr/local/man/man2/execvhack.so.2
 %files
 %attr(755, root, bin) /usr/local/lib/execvhack.so
 %attr(644, root, bin) /usr/local/man/man2/execvhack.so.2.gz
-%doc Copying README.md execvhack.c mycode.c mycode.sh sample.c secret secret.sh secret.sh.x.c
-
+%doc LICENSE Makefile README.md execvhack.c mycode.c mycode.sh sample.c secret secret.sh secret.sh.x.c
 
 
 %changelog
+* Mon Mar 14 2016 Billy Holmes <billy@gonoph.net> - 1.0.0-2
+- Changed LICENSE and README.md files due to addition on GitHub
+
 * Sun Mar 13 2016 Billy Holmes <billy@gonoph.net - 1.0.0-1
 - initial project creation
 
