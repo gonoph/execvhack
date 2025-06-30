@@ -1,11 +1,11 @@
 .PHONY: all install clean dist
 
 PROJECT:=execvhack
-MY_VERSION:=1.0.0
+MY_VERSION:=1.1.0
 DIST_DIR:=$(PROJECT)-$(MY_VERSION)
 DIST_TARGET:=$(DIST_DIR).tgz
 
-DIST_FILES:=Copying Makefile README.md execvhack.c execvhack.so.2 execvhack.spec mycode.c mycode.sh sample.c secret.sh
+DIST_FILES:=Copying Makefile README.md execvhack.c execvhack.so.2 execvhack.spec mycode.c mycode.template.bash secret.template
 
 INSTALL_ROOT:=$(DESTDIR)/usr/local
 
@@ -19,6 +19,12 @@ execvhack.o: execvhack.c
 execvhack.so: execvhack.o
 	$(CC) $(LDFLAGS) -shared -o $@ execvhack.o
 
+secret.sh: secret.template mycode.template.bash
+	./mycode.template.bash > $@
+	chmod +x $@
+
+mycode.template.bash: mycode.c
+
 secret.sh.x: secret.sh
 	shc -r -f secret.sh
 
@@ -30,7 +36,7 @@ install: execvhack.so secret.sh.x execvhack.so.2
 	install -m 644 execvhack.so.2 -D $(INSTALL_ROOT)/man/man2/execvhack.so.2
 
 clean: dist-clean
-	rm -f execvhack.[aso] execvhack.so secret.sh.x secret.sh.x.c secret $(DIST_TARGET)
+	rm -f execvhack.[aso] execvhack.so secret.sh.x secret.sh.x.c secret secret.sh $(DIST_TARGET)
 
 dist: dist-clean
 	mkdir $(DIST_DIR) && cp $(DIST_FILES) $(DIST_DIR) && tar -cvzf $(DIST_TARGET) $(DIST_DIR)
