@@ -47,7 +47,7 @@ int execvp (const char *__path, char *const __argv[]) {
 }
 
 void __attribute__ ((constructor)) my_init(void) {
-	printf("Loading hack.\n");
+	fprintf(stderr,"Loading hack.\n");
 	orig_execvpe = dlsym(RTLD_NEXT, "execvpe");
 	orig_execvp = dlsym(RTLD_NEXT, "execvp");
 	orig_execve = dlsym(RTLD_NEXT, "execve");

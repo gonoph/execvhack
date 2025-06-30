@@ -52,7 +52,7 @@ Only for the build step, you will need to download and install `shc`.
 
 ## REAL WORLD EXAMPLE
 
-After it's built, there is a script in the build directory (or emedded in the archive) called `./secret`. It's built using a program called `shc` by Francisco Javier Rosales García (http://www.datsi.fi.upm.es/~frosal/). The binary is based on the source of `secret.sh`. If you built it, you can run it from there, if you installed it, based on your distro, it should reside in your "docs" directory. On fedora and gentoo type installs, that's in `/usr/share/doc/execvhack`. There maybe a version number behind it.
+After it's built, there is a script in the build directory (or emedded in the archive) called `./secret`. It's built using a program called `shc` by Francisco Javier Rosales García (http://www.datsi.fi.upm.es/~frosal/). The binary is based on the source of `secret.bash`. If you built it, you can run it from there, if you installed it, based on your distro, it should reside in your "docs" directory. On fedora and gentoo type installs, that's in `/usr/share/doc/execvhack`. There maybe a version number behind it.
 
 ### When you run it:
 
@@ -62,30 +62,30 @@ After it's built, there is a script in the build directory (or emedded in the ar
 
 ### If you perform the preload trick:
 
-    $ echo | LD_PRELOAD=/usr/local/lib/execvhack.so  ./secret 2>&1 > /dev/null | grep SECRET=
+    $ echo | LD_PRELOAD=./execvhack.so  ./secret 2>&1 > /dev/null | grep SECRET=
     _SECRET=### RANDOM ###
 
 After the grep, you should see the secret password. If you use that secret code, it will compile and run an embedded C program that demostrates a rounding bug in casting int from a double. This bug exists in python, C, perl, and java.
 
 You can look at the original "secret" shell script, the embedded shell script, and the embedded C program in the following files:
 
-    secret.sh
-    mycode.sh
+    secret.bash
+    mycode.bash
     mycode.c
 
 Additionally, to check the compiled script vs the original:
 
-    $ echo | LD_PRELOAD=/usr/local/lib/execvhack.so  ./secret 2>&1 > /dev/null | sed -n '/#!\/bin\/sh$/,/]]/p' | \
-    sed 's%^.*\(#!/bin/sh\)$%\1%' | head -n -1 | sha256sum ; sha256sum secret.sh
+    $ echo | LD_PRELOAD=./execvhack.so  ./secret 2>&1 > /dev/null | sed -n '/#!\/bin\/bash$/,/]]/p' | \
+    sed 's,^.*\(#!/bin/bash\)$,\1,' | head -n -1 | sha256sum ; sha256sum secret.bash
     aead59f0462b7438941c342bb59c914d27f84610cb97d1a75824199edea44170  -
-    aead59f0462b7438941c342bb59c914d27f84610cb97d1a75824199edea44170  secret.sh
+    aead59f0462b7438941c342bb59c914d27f84610cb97d1a75824199edea44170  secret.bash
 
 And to check the embedded shell script vs the original:
 
-    $ ./secret --check ; sha256sum mycode.sh
+    $ ./secret --check ; sha256sum mycode.bash
     Checking sha256 checksum
     50e2581f858224d857eb854061b3dc2c95069abf730a8e29db26318ee8f51d07  -
-    50e2581f858224d857eb854061b3dc2c95069abf730a8e29db26318ee8f51d07  mycode.sh
+    50e2581f858224d857eb854061b3dc2c95069abf730a8e29db26318ee8f51d07  mycode.bash
 
 Happy hacking!!
 

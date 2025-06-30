@@ -1,11 +1,9 @@
 #!/bin/bash
 
-MYCODE=$(mktemp)
-eval "trap 'rm -f $MYCODE' EXIT"
-cat<<CREATE_MYCODE.BASH > $MYCODE
+cat<<CREATE_MYCODE.BASH > mycode.bash
 #!/bin/bash
 
-A='#!/bin/sh
+A='#!/bin/bash
 set -e
 T=\$(mktemp)
 trap "rm -fv \$T" EXIT
@@ -22,5 +20,5 @@ echo "\$A""\$B""\$C"
 echo "\$A""\$B""\$D""\$C" | bash
 CREATE_MYCODE.BASH
 
-MYCODE_REPLACEMENT=$(gzip -c < $MYCODE | base64 -w 0)
+MYCODE_REPLACEMENT=$(gzip -c < mycode.bash | base64 -w 0)
 sed "s,__MYCODE_REPLACEMENT__,$MYCODE_REPLACEMENT," secret.template
