@@ -9,6 +9,9 @@
 #define EXECVE 3
 #define EXECVPE 4
 
+const char * VERSION_STRING = "execvhack v1.0.1";
+const char * COPYRIGHT = "Copyright 2016, 2025 - Billy Holmes";
+
 int (*orig_execvp)(const char *__path, char *const __argv[]);
 int (*orig_execv)(const char *__path, char *const __argv[]);
 int (*orig_execve)(const char *__path, char *const __argv[], char *const __envp[]);
@@ -47,7 +50,7 @@ int execvp (const char *__path, char *const __argv[]) {
 }
 
 void __attribute__ ((constructor)) my_init(void) {
-	fprintf(stderr,"Loading hack.\n");
+	fprintf(stderr,"%s\n%s\nLoading hack.\n", VERSION_STRING, COPYRIGHT);
 	orig_execvpe = dlsym(RTLD_NEXT, "execvpe");
 	orig_execvp = dlsym(RTLD_NEXT, "execvp");
 	orig_execve = dlsym(RTLD_NEXT, "execve");

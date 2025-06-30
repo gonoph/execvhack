@@ -1,11 +1,11 @@
 .PHONY: all compile install clean dist test test-secret test-mycode
 
 PROJECT:=execvhack
-MY_VERSION:=1.1.0
+MY_VERSION:=1.0.1
 DIST_DIR:=$(PROJECT)-$(MY_VERSION)
 DIST_TARGET:=$(DIST_DIR).tgz
 
-DIST_FILES:=Copying Makefile README.md execvhack.c execvhack.so.2 execvhack.spec mycode.c mycode.template.bash secret.template
+DIST_FILES:=LICENSE Copying Makefile README.md execvhack.c execvhack.so.2 execvhack.spec mycode.c mycode.template.bash secret.template
 
 INSTALL_ROOT:=$(DESTDIR)/usr/local
 
